@@ -1,0 +1,77 @@
+{{define "body"}}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header" data-i18n="webhooks_title">网络钩子</h1>
+    <div id="flashes" class="row"></div>
+    <div class="row">
+        <button type="button" class="btn btn-primary" id="new_button" data-toggle="modal" data-backdrop="static"
+            data-webhook-id="-1" data-target="#modal">
+            <i class="fa fa-plus"></i> <span data-i18n="webhooks_new">新建 Webhook</span></button>
+    </div>
+    &nbsp;
+    <div id="loading">
+        <i class="fa fa-spinner fa-spin fa-4x"></i>
+    </div>
+    <div class="row">
+        <table id="webhookTable" class="table" style="display:none;">
+            <thead>
+                <tr>
+                    <th class="col-md-2 no-sort" data-i18n="webhooks_name">名称</th>
+                    <th class="col-md-2 no-sort" data-i18n="webhooks_url">URL 地址</th>
+                    <th class="col-md-2 no-" data-i18n="webhooks_active">是否启用</th>
+                    <th class="col-md-2 no-sort"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="webhookModalLabel">添加或编辑 Webhook</h4>
+            </div>
+            <div class="modal-body" id="modal_body">
+                <div class="row" id="modal.flashes"></div>
+                <label class="control-label" for="title" data-i18n="webhooks_name">名称：</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="名称" id="name" required autofocus />
+                </div>
+
+                <label class="control-label" for="url" data-i18n="webhooks_url">URL 地址：</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="https://example.com/webhook1" id="url"
+                        required />
+                </div>
+
+                <label class="control-label" for="secret" data-i18n="webhooks_secret">密钥：</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="密钥" id="secret" required />
+                </div>
+
+                <div class="checkbox checkbox-primary">
+                    <input type="checkbox" id="is_active" value="true" />
+                    <label for="is_active"><span data-i18n="webhooks_active">是否启用</span> <i
+                            class="fa fa-question-circle" data-toggle="tooltip" data-placement="right"
+                            title="只有启用的 Webhook 才会接收数据"></i>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" data-i18n="btn_close">关闭</button>
+                <button type="button" class="btn btn-primary" id="modalSubmit" data-i18n="btn_save">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{end}} {{define "scripts"}}
+<script src="/js/dist/app/webhooks.min.js"></script>
+{{end}}

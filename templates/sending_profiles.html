@@ -1,0 +1,149 @@
+{{define "body"}}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header" data-i18n="profiles_title">发送配置</h1>
+    <div id="flashes" class="row"></div>
+    <div class="row">
+        <button type="button" class="btn btn-primary" onclick="edit(-1)" data-toggle="modal" data-backdrop="static"
+            data-target="#modal"><i class="fa fa-plus"></i> <span data-i18n="profiles_new">新建配置</span></button>
+    </div>
+    &nbsp;
+    <div id="loading">
+        <i class="fa fa-spinner fa-spin fa-4x"></i>
+    </div>
+    <div id="emptyMessage" class="row" style="display:none;">
+        <div class="alert alert-info" data-i18n="profiles_no_profiles">
+            暂无发送配置，点击新建开始创建！
+        </div>
+    </div>
+    <div class="row">
+        <table id="profileTable" class="table" style="display:none;">
+            <thead>
+                <tr>
+                    <th class="col-md-4" data-i18n="profiles_name">配置名称</th>
+                    <th data-i18n="profiles_interface_type">接口类型</th>
+                    <th data-i18n="profiles_modified">最后修改</th>
+                    <th class="col-md-2 no-sort"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="dismiss()"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="profileModalLabel" data-i18n="profiles_new">新建发送配置</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="modal.flashes"></div>
+                <form>
+                    <div class="form-group">
+                        <label class="control-label" for="name" data-i18n="profiles_name">配置名称：</label>
+                        <input type="text" class="form-control" placeholder="配置名称" id="name" autofocus />
+                        <label class="control-label" for="interface_type"
+                            data-i18n="profiles_interface_type">接口类型：</label>
+                        <input type="text" class="form-control" value="SMTP" id="interface_type" disabled />
+                        <label class="control-label" for="from"><span data-i18n="profiles_from">发件人</span>：<i
+                                class="fa fa-question-circle" data-toggle="tooltip" data-placement="right"
+                                title="设置为您发送域的邮件地址以绕过 SPF 检查。您可以在邮件模板中设置信封发件人。信封发件人将显示给用户。"></i></label>
+                        <input type="text" class="form-control" placeholder="张三 <test@example.com>" id="from"
+                            required />
+                        <label class="control-label" for="host" data-i18n="profiles_host">SMTP 服务器：</label>
+                        <input type="text" class="form-control" placeholder="smtp.example.com:25" id="host" required />
+                        <label class="control-label" for="username" data-i18n="profiles_username">用户名：</label>
+                        <input type="text" class="form-control" placeholder="用户名" id="username" />
+                        <label class="control-label" for="password" data-i18n="profiles_password">密码：</label>
+                        <input type="password" class="form-control" placeholder="密码" id="password" />
+                        <div class="checkbox checkbox-primary">
+                            <input id="ignore_cert_errors" type="checkbox" checked>
+                            <label for="ignore_cert_errors"><span data-i18n="profiles_ignore_cert">忽略证书错误</span> <i
+                                    class="fa fa-question-circle" data-toggle="tooltip" data-placement="right"
+                                    title="忽略常见的证书错误，如自签名证书（会使您面临中间人攻击风险 - 请谨慎使用！）"></i></label>
+                        </div>
+                    </div>
+                    <fieldset class="form-group">
+                        <label class="control-label input-group" data-i18n="profiles_custom_headers">自定义邮件头：</label>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="headerKey" id="headerKey"
+                                placeholder="X-Custom-Header">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" name="headerValue" id="headerValue"
+                                placeholder='{{"{{"}} .URL {{"}}"}}'>
+                        </div>
+                        <div class="col-md-2">
+                            <button id="addCustomHeader" class="btn btn-danger btn-headers" type="button"><i
+                                    class="fa fa-plus"></i> <span data-i18n="profiles_add_header">添加邮件头</span></button>
+                        </div>
+                    </fieldset>
+                    <table id="headersTable" class="table table-hover table-striped table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Header</th>
+                                <th>Value</th>
+                                <th class="no-sort"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <button type="button" data-toggle="modal" data-backdrop="static" data-target="#sendTestEmailModal"
+                        class="btn btn-primary"><i class="fa fa-envelope"></i> <span
+                            data-i18n="profiles_send_test">发送测试邮件</span></button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default" onclick="dismiss()"
+                    data-i18n="btn_cancel">取消</button>
+                <button type="button" class="btn btn-primary" id="modalSubmit"><span
+                        data-i18n="btn_save">保存</span>配置</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Send Test Email Modal -->
+<div class="modal" id="sendTestEmailModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="sendTestEmailModalTitle" data-i18n="profiles_send_test">发送测试邮件</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="sendTestEmailModal.flashes"></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label class="control-label" for="to">发送测试邮件到：</label>
+                    </div>
+                    <br>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" placeholder="名字" name="to_first_name">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" placeholder="姓氏" name="to_last_name">
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="email" class="form-control" placeholder="邮箱地址" name="to_email" required>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="职位" name="to_position">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default" data-i18n="btn_cancel">取消</button>
+                <button type="button" class="btn btn-primary" id="sendTestModalSubmit" onclick="sendTestEmail()"><i
+                        class="fa fa-envelope"></i> <span data-i18n="btn_send">发送</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}} {{define "scripts"}}
+<script src="/js/dist/app/sending_profiles.min.js"></script>
+{{end}}

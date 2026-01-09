@@ -1,0 +1,191 @@
+{{define "body"}}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="row">
+        <h1 class="page-header" data-i18n="campaigns_title">钓鱼活动</h1>
+    </div>
+    <div id="flashes" class="row"></div>
+    <div class="row">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-backdrop="static" data-target="#modal"
+            onclick="edit('new')">
+            <i class="fa fa-plus"></i> <span data-i18n="campaigns_new">新建活动</span></button>
+    </div>
+    &nbsp;
+
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="active" role="activeCampaigns"><a href="#activeCampaigns" aria-controls="activeCampaigns" role="tab"
+                data-toggle="tab" data-i18n="campaigns_active">进行中的活动</a></li>
+        <li role="archivedCampaigns"><a href="#archivedCampaigns" aria-controls="archivedCampaigns" role="tab"
+                data-toggle="tab" data-i18n="campaigns_archived">已归档活动</a></li>
+    </ul>
+    </br>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="activeCampaigns">
+            <div id="flashes" class="row"></div>
+            &nbsp;
+            <div id="loading">
+                <i class="fa fa-spinner fa-spin fa-4x"></i>
+            </div>
+            <div id="emptyMessage" class="row" style="display:none;">
+                <div class="alert alert-info" data-i18n="campaigns_no_active">
+                    暂无活动，点击新建开始第一个活动！
+                </div>
+            </div>
+            <div class="row">
+                <table id="campaignTable" class="table" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th class="col-md-3" data-i18n="campaigns_name">名称</th>
+                            <th class="col-md-4" data-i18n="campaigns_created_date">创建时间</th>
+                            <th class="col-md-2" data-i18n="campaigns_status">状态</th>
+                            <th class="col-md-3 no-sort"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="archivedCampaigns">
+            </br>
+            <div id="emptyMessage" class="row" style="display:none;">
+                </br>
+                <div class="alert alert-info" data-i18n="campaigns_no_archived">
+                    暂无已归档活动。
+                </div>
+            </div>
+            <div class="row">
+                <table id="campaignTableArchive" class="table" style="display:none;">
+                    <thead>
+                        <tr>
+                            <th class="col-md-3" data-i18n="campaigns_name">名称</th>
+                            <th class="col-md-4" data-i18n="campaigns_created_date">创建时间</th>
+                            <th class="col-md-2" data-i18n="campaigns_status">状态</th>
+                            <th class="col-md-3 no-sort"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="dismiss()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="campaignModalLabel" data-i18n="campaigns_new">新建活动</h4>
+            </div>
+            <div class="modal-body" id="modal_body">
+                <div class="row" id="modal.flashes"></div>
+                <div class="form-group">
+                    <label for="name" data-i18n="campaigns_name">名称：</label>
+                    <input type="text" class="form-control" id="name" placeholder="活动名称" autofocus>
+                    <label class="control-label" for="template" data-i18n="campaigns_email_template">邮件模板：</label>
+                    <select class="form-control" placeholder="模板名称" id="template" />
+                    <option></option>
+                    </select>
+                    <label class="control-label" for="page" data-i18n="campaigns_landing_page">钓鱼页面：</label>
+                    <select class="form-control" placeholder="钓鱼页面" id="page" />
+                    <option></option>
+                    </select>
+                    <label class="control-label" for="url"><span data-i18n="campaigns_url">钓鱼链接</span>：
+                        <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right"
+                            title="Gophish 监听地址（目标必须能够访问！）" data-i18n-title="campaigns_url_tip"></i>
+                    </label>
+                    <input type="text" class="form-control" placeholder="http://192.168.1.1" id="url" />
+                    <label class="control-label" for="qrsize"><span data-i18n="campaigns_qr_size">二维码大小</span>：
+                        <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right"
+                            title="二维码图片大小（像素）。留空则不生成二维码，使用普通链接。" data-i18n-title="campaigns_qr_size_tip"></i>
+                    </label>
+                    <input type="number" class="form-control" placeholder="256" id="qrsize" min="1" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="control-label" for="url" data-i18n="campaigns_launch_date">启动时间</label>
+                            <input type="text" class="form-control" id="launch_date" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="control-label" for="delay"><span
+                                    data-i18n="campaigns_send_by">发送截止时间（可选）</span>
+                                <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="right"
+                                    title="如果设置，Gophish 将在启动时间和此时间之间均匀发送邮件。"
+                                    data-i18n-title="campaigns_send_by_tip"></i>
+                            </label>
+                            <input type="text" class="form-control" id="send_by_date" autocomplete="random-data" />
+                        </div>
+                    </div>
+                    <label class="control-label" for="profile" data-i18n="campaigns_sending_profile">发送配置：</label>
+                    <div class="input-group">
+                        <select class="form-control" placeholder="发送配置" id="profile" />
+                        <option></option>
+                        </select>
+                        <span class="input-group-btn">
+                            <button type="button" data-toggle="modal" data-backdrop="static"
+                                data-target="#sendTestEmailModal" class="btn btn-primary button">
+                                <i class="fa fa-envelope"></i> <span
+                                    data-i18n="campaigns_send_test">发送测试邮件</span></button>
+                        </span>
+                    </div>
+                    <label class="control-label" for="users" data-i18n="campaigns_groups">目标用户组：</label>
+                    <select class="form-control" id="users" multiple="multiple"></select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="dismiss()"
+                    data-i18n="btn_close">关闭</button>
+                <button type="button" id="launchButton" class="btn btn-primary" onclick="launch()">
+                    <i class="fa fa-rocket"></i> <span data-i18n="btn_launch">启动活动</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Send Test Email Modal -->
+<div class="modal" id="sendTestEmailModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="sendTestEmailModalTitle" data-i18n="campaigns_send_test">发送测试邮件</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="sendTestEmailModal.flashes"></div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <label class="control-label" for="to" data-i18n="campaigns_test_email_to">发送测试邮件到：</label>
+                    </div>
+                    <br>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" placeholder="名字" name="to_first_name"
+                            data-i18n-placeholder="campaigns_test_first_name">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" placeholder="姓氏" name="to_last_name"
+                            data-i18n-placeholder="campaigns_test_last_name">
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="email" class="form-control" placeholder="邮箱地址" name="to_email" required
+                            data-i18n-placeholder="campaigns_test_email">
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="职位" name="to_position"
+                            data-i18n-placeholder="campaigns_test_position">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default" data-i18n="btn_cancel">取消</button>
+                <button type="button" class="btn btn-primary" id="sendTestModalSubmit" onclick="sendTestEmail()">
+                    <i class="fa fa-envelope"></i> <span data-i18n="btn_send">发送</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}} {{define "scripts"}}
+<script src="/js/dist/app/campaigns.min.js"></script>
+{{end}}

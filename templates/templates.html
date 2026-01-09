@@ -1,0 +1,151 @@
+{{define "body"}}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="row">
+        <h1 class="page-header" data-i18n="templates_title">邮件模板</h1>
+    </div>
+    <div id="flashes" class="row"></div>
+    <div class="row">
+        <button type="button" class="btn btn-primary" onclick="edit(-1)" data-toggle="modal" data-backdrop="static"
+            data-target="#modal"><i class="fa fa-plus"></i> <span data-i18n="templates_new">新建模板</span></button>
+    </div>
+    &nbsp;
+    <div id="loading">
+        <i class="fa fa-spinner fa-spin fa-4x"></i>
+    </div>
+    <div id="emptyMessage" class="row" style="display:none;">
+        <div class="alert alert-info" data-i18n="templates_no_templates">
+            暂无模板，点击新建开始创建！
+        </div>
+    </div>
+    <div class="row">
+        <table id="templateTable" class="table" style="display:none;">
+            <thead>
+                <tr>
+                    <th data-i18n="templates_name">模板名称</th>
+                    <th data-i18n="templates_modified">最后修改</th>
+                    <th class="col-md-2 no-sort"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="dismiss()"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="templateModalLabel" data-i18n="templates_new">新建模板</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="modal.flashes"></div>
+                <label class="control-label" for="name" data-i18n="templates_name">模板名称：</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" ng-model="template.name" placeholder="模板名称" id="name"
+                        autofocus />
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-danger" data-toggle="modal" data-backdrop="static"
+                        data-target="#importEmailModal"><i class="fa fa-envelope"></i>
+                        <span data-i18n="templates_import_email">导入邮件</span></button>
+                </div>
+                <label class="control-label" for="envelope-sender"><span
+                        data-i18n="templates_envelope_sender">信封发件人</span>：<i class="fa fa-question-circle"
+                        data-toggle="tooltip" data-placement="right"
+                        title="此发件人显示在邮件头中，大多数邮件客户端会显示此地址。默认使用发送配置中定义的 SMTP 发件人。"></i></label>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="张三 <test@example.com>" id="envelope-sender" />
+                </div>
+                <label class="control-label" for="subject" data-i18n="templates_subject">邮件主题：</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="邮件主题" id="subject" />
+                </div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="active" role="text"><a href="#text" aria-controls="text" role="tab" data-toggle="tab"
+                            data-i18n="templates_text">纯文本</a></li>
+                    <li role="html"><a href="#html" aria-controls="html" role="tab" data-toggle="tab">HTML</a></li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="text">
+                        <textarea rows="10" id="text_editor" class="gophish-editor form-control"
+                            placeholder="纯文本内容"></textarea>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="html">
+                        <textarea id="html_editor"></textarea>
+                    </div>
+                </div>
+                <div class="checkbox checkbox-primary">
+                    <input id="use_tracker_checkbox" type="checkbox" checked>
+                    <label for="use_tracker_checkbox" data-i18n="templates_add_tracking">添加追踪图片</label>
+                </div>
+                <span class="btn btn-danger btn-file"><i class="fa fa-plus"></i> <span
+                        data-i18n="templates_add_files">添加附件</span>
+                    <input id="attachmentUpload" type="file" onchange="attach(this.files)" multiple>
+                </span>
+                <br />
+                <br />
+                <table id="attachmentsTable" class="table">
+                    <thead>
+                        <tr>
+                            <th class="col-md-1 no-sort"></th>
+                            <th class="col-md-10" data-i18n="templates_name">名称</th>
+                            <th class="col-md-1 no-sort"></th>
+                            <th class="datatable_hidden no-sort">Content</th>
+                            <th class="datatable_hidden no-sort">Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <hr>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default" onclick="dismiss()"
+                    data-i18n="btn_cancel">取消</button>
+                <button type="button" class="btn btn-primary" id="modalSubmit"><span
+                        data-i18n="btn_save">保存</span>模板</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Import Email Modal -->
+<div class="modal fade" id="importEmailModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="importEmailModalLabel" data-i18n="templates_import_email">导入邮件</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="modal.flashes"></div>
+                <label class="control-label" for="email">邮件内容：</label>
+                <div class="form-group">
+                    <textarea rows="10" id="email_content" class="gophish-editor form-control"
+                        placeholder="原始邮件源代码"></textarea>
+                </div>
+                <div class="checkbox checkbox-primary">
+                    <input id="convert_links_checkbox" type="checkbox" checked>
+                    <label for="convert_links_checkbox">将链接替换为钓鱼页面地址</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default" data-i18n="btn_cancel">取消</button>
+                <button type="button" class="btn btn-primary" id="modalSubmit" onclick="importEmail()"
+                    data-i18n="btn_import">导入</button>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}
+{{define "scripts"}}
+<script src="/js/src/vendor/ckeditor/ckeditor.js"></script>
+<script src="/js/src/vendor/ckeditor/adapters/jquery.js"></script>
+<script src="/js/dist/app/autocomplete.min.js"></script>
+<script src="/js/dist/app/templates.min.js"></script>
+{{end}}

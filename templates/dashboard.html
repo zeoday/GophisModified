@@ -1,0 +1,68 @@
+{{define "body"}}
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <h1 class="page-header" data-i18n="dashboard_title">仪表盘</h1>
+    <div id="loading">
+        <i class="fa fa-spinner fa-spin fa-4x"></i>
+    </div>
+    {{template "flashes" .Flashes}}
+    <div id="emptyMessage" style="display:none;">
+        <div class="alert alert-info" data-i18n="dashboard_no_campaigns">
+            暂无活动，点击新建开始第一个活动！
+        </div>
+    </div>
+    <div id="dashboard" style="display:none;">
+        <div class="row">
+            <div id="overview_chart" style="height:200px;" class="col-lg-12 col-md-12 col-sm-12 col-xs-12"></div>
+        </div>
+        <div class="row">
+            <div style="height:200px;" class="col-lg-1 col-md-1"></div>
+            <div id="sent_chart" style="height:200px;" class="col-lg-2 col-md-2"></div>
+            <div id="opened_chart" style="height:200px;" class="col-lg-2 col-md-2"></div>
+            <div id="clicked_chart" style="height:200px;" class="col-lg-2 col-md-2"></div>
+            <div id="submitted_data_chart" style="height:200px;" class="col-lg-2 col-md-2"></div>
+            <div id="email_reported_chart" style="height:200px;" class="col-lg-2 col-md-2"></div>
+            <div style="height:200px;" class="col-lg-1 col-md-1"></div>
+        </div>
+        <div class="row">
+            <h2 data-i18n="dashboard_campaigns">近期活动</h2>
+        </div>
+        <div class="row">
+            <a href="/campaigns">
+                <button type="button" class="btn btn-primary">查看全部</button>
+            </a>
+        </div>
+        &nbsp;&nbsp;
+        <div class="row">
+            <table id="campaignTable" class="table">
+                <thead>
+                    <tr>
+                        <th class="col-md-2 col-sm-2" data-i18n="campaigns_name">名称</th>
+                        <th class="col-md-2 col-sm-2" data-i18n="campaigns_created_date">创建时间</th>
+                        <th class="col-md-1 col-sm-1">
+                            <i class="fa fa-envelope-o" title="已发送"></i>
+                        </th>
+                        <th class="col-md-1 col-sm-1">
+                            <i class="fa fa-envelope-open-o" title="已打开"></i>
+                        </th>
+                        <th class="col-md-1 col-sm-1">
+                            <i class="fa fa-mouse-pointer" title="已点击"></i>
+                        </th>
+                        <th class="col-md-1 col-sm-1">
+                            <i class="fa fa-exclamation-circle" title="已提交"></i>
+                        </th>
+                        <th class="col-md-1 col-sm-1">
+                            <i class="fa fa-bullhorn" title="已举报"></i>
+                        </th>
+                        <th class="col-md-1 col-sm-1" data-i18n="campaigns_status">状态</th>
+                        <th class="col-md-2 col-sm-2 no-sort"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{{end}} {{define "scripts"}}
+<script src="/js/dist/app/dashboard.min.js"></script>
+{{end}}

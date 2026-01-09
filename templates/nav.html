@@ -1,0 +1,49 @@
+{{define "nav"}}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+                <li>
+                    <a href="/" data-i18n="nav_dashboard">仪表盘</a>
+                </li>
+                <li>
+                    <a href="/campaigns" data-i18n="nav_campaigns">钓鱼活动</a>
+                </li>
+                <li>
+                    <a href="/groups" data-i18n="nav_users">用户和组</a>
+                </li>
+                <li>
+                    <a href="/templates" data-i18n="nav_templates">邮件模板</a>
+                </li>
+                <li>
+                    <a href="/landing_pages" data-i18n="nav_landing_pages">钓鱼页面</a>
+                </li>
+                <li>
+                    <a href="/sending_profiles" data-i18n="nav_sending_profiles">发送配置</a>
+                </li>
+                <li>
+                    <a href="/settings" data-i18n="nav_settings">账户设置</a>
+                </li>
+                {{if .ModifySystem}}
+                <li>
+                    <a href="/users"><span data-i18n="nav_user_management">用户管理</span><span
+                            class="nav-badge badge pull-right">Admin</span></a>
+                </li>
+                <li>
+                    <a href="/webhooks"><span data-i18n="nav_webhooks">网络钩子</span><span
+                            class="nav-badge badge pull-right">Admin</span></a>
+                </li>
+                {{end}}
+                <li>
+                    <hr>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" onclick="i18n.toggleLang()" id="langToggle" class="lang-toggle">
+                        <i class="fa fa-globe"></i> English
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{{end}}
