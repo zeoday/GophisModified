@@ -28,6 +28,9 @@
 
 Gophish Enhanced Edition is a deeply customized version based on the original Gophish v0.12.1. It addresses common pain points encountered in real-world red team operations and corporate security training, such as email blocking, obvious fingerprints, and lack of localization.
 
+> [!IMPORTANT]
+> Jan 20, 2026: Cloud automated deployment updated, pay-as-you-go and ready-to-use. Link: [PhishOps](https://github.com/25smoking/PhishOps)
+
 **Why Enhanced Edition?**
 
 - 🛡️ **High Stealth**: Removes all fingerprint headers that trigger antivirus software or email gateways
