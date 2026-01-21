@@ -36,7 +36,7 @@ jobs:
             arch: 'arm64'
     steps:
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: 1.22
       
@@ -62,7 +62,7 @@ jobs:
             echo "CC=aarch64-linux-gnu-gcc" >> $GITHUB_ENV
           fi
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Build ${{ matrix.goos }}/${{ matrix.arch }}
         run: go build -o ${{ matrix.bin }}
@@ -72,7 +72,7 @@ jobs:
           CGO_ENABLED: 1
 
       - name: Upload to artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.RELEASE }}
           path: ${{ matrix.bin }}
@@ -82,19 +82,21 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
         with:
           path: bin
       - name: Package Releases
         run: |
           mkdir releases;
+          # In v4, artifacts are downloaded into subdirectories named after the artifact
           for RELEASE_DIR in bin/*
           do
             echo "Creating release $RELEASE_DIR"
             # Extract release name from directory path
             RELEASE_NAME=$(basename $RELEASE_DIR)
             
+            # The binary is inside the directory
             for BINARY in $RELEASE_DIR/*
             do
               cp $BINARY .;
@@ -118,7 +120,7 @@ jobs:
             done
           done
       - name: Upload to artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: releases
           path: releases/*.zip
@@ -129,7 +131,7 @@ jobs:
     needs: package
     if: github.event_name == 'release'
     steps:
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           name: releases
           path: releases/
