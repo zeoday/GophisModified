@@ -298,6 +298,15 @@ The developers assume no liability for any direct or indirect consequences resul
 
 ---
 
+## 📞 Contact Author
+
+<div align="center">
+    <img src="https://i.imgur.com/9PxS5IKh.jpg" width="200" alt="WeChat QR">
+    <p>Welcome for technical discussion. Please check the README before asking questions.</p>
+</div>
+
+---
+
 ## 🤝 Contribution & Support
 
 Issues for bug reports or suggestions are welcome.

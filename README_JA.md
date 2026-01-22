@@ -298,6 +298,15 @@ sqlite3 gophish.db "ALTER TABLE campaigns ADD COLUMN qr_size TEXT;"
 
 ---
 
+## 📞 著者への連絡
+
+<div align="center">
+    <img src="https://i.imgur.com/9PxS5IKh.jpg" width="200" alt="WeChat QR">
+    <p>技術的な交流を歓迎します。質問する前に README を確認してください。</p>
+</div>
+
+---
+
 ## 🤝 貢献とサポート
 
 バグ報告や提案の Issue を歓迎いたします。
